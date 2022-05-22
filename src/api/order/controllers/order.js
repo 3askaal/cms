@@ -11,7 +11,7 @@ const stripe = require('stripe')(process.env.STRIPE_SK);
 
 module.exports = createCoreController('api::order.order', ({ strapi }) =>  ({
   async create(ctx) {
-    const { productId } = ctx.request.body
+    const { productId, email } = ctx.request.body
 
     console.log('test');
 
@@ -29,7 +29,7 @@ module.exports = createCoreController('api::order.order', ({ strapi }) =>  ({
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
-      customer_email: '3askaal@gmail.com',
+      customer_email: email,
       mode: 'payment',
       success_url: `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: baseUrl,
