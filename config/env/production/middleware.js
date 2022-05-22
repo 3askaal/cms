@@ -2,7 +2,7 @@ module.exports = {
   settings: {
     cors: {
       enabled: true,
-      origin: ["http://localhost", 'https://fray.amsterdam', ''],
+      origin: ["http://localhost", 'https://fray.amsterdam', 'https://frayhandmade.vercel.app'],
     },
   },
 };
