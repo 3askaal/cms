@@ -19,7 +19,6 @@
     "better-sqlite3": "7.4.6",
     "pg": "^8.7.3",
     "pg-connection-string": "^2.5.0",
-    "strapi-stripe": "^1.6.0",
     "stripe": "^9.2.0"
   },
   "author": {
