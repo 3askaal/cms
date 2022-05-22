@@ -13,8 +13,6 @@ module.exports = createCoreController('api::order.order', ({ strapi }) =>  ({
   async create(ctx) {
     const { productId, email } = ctx.request.body
 
-    console.log('test');
-
     if (!productId) {
       return ctx.throw(400, 'No product specified.')
     }
