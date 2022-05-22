@@ -7,7 +7,8 @@
     "dev": "strapi develop",
     "start": "strapi start",
     "build": "strapi build",
-    "strapi": "strapi"
+    "strapi": "strapi",
+    "gen": "strapi generate"
   },
   "devDependencies": {},
   "dependencies": {
@@ -18,7 +19,8 @@
     "better-sqlite3": "7.4.6",
     "pg": "^8.7.3",
     "pg-connection-string": "^2.5.0",
-    "strapi-stripe": "^1.6.0"
+    "strapi-stripe": "^1.6.0",
+    "stripe": "^9.2.0"
   },
   "author": {
     "name": "A Strapi developer"
