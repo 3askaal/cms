@@ -11,16 +11,16 @@ const stripe = require('stripe')(process.env.STRIPE_SK);
 
 module.exports = createCoreController('api::order.order', ({ strapi }) =>  ({
   async create(ctx) {
-    const { productId, customerInfo } = ctx.request.body
+    const { productIds, customerInfo } = ctx.request.body
 
-    if (!productId) {
-      return ctx.throw(400, 'No product specified.')
+    if (!productIds || !productIds.length) {
+      return ctx.throw(400, 'No product id\'s specified.')
     }
 
-    const product = await strapi.services['api::product.product'].findOne(productId);
+    const products = await Promise.all(productIds.map((productId) => strapi.services['api::product.product'].findOne(productId)));
 
-    if (!product) {
-      return ctx.throw(400, 'No product found.')
+    if (!products.length) {
+      return ctx.throw(400, 'No products found.')
     }
 
     const baseUrl = ctx.request.headers.origin || 'http://localhost:3000'
@@ -31,7 +31,7 @@ module.exports = createCoreController('api::order.order', ({ strapi }) =>  ({
       mode: 'payment',
       success_url: `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: baseUrl,
-      line_items: [
+      line_items: products.map((product) => [
         {
           price_data: {
             currency: 'eur',
@@ -42,7 +42,7 @@ module.exports = createCoreController('api::order.order', ({ strapi }) =>  ({
           },
           quantity: 1
         }
-      ]
+      ])
     })
 
     const order = await strapi.services['api::order.order'].create({
