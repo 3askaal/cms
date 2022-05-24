@@ -43,9 +43,9 @@
     },
     "orders": {
       "type": "relation",
-      "relation": "oneToMany",
+      "relation": "manyToMany",
       "target": "api::order.order",
-      "mappedBy": "product"
+      "inversedBy": "products"
     }
   }
 }

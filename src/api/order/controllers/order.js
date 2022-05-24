@@ -29,26 +29,24 @@ module.exports = createCoreController('api::order.order', ({ strapi }) =>  ({
       payment_method_types: ['card'],
       customer_email: customerInfo.email,
       mode: 'payment',
-      success_url: `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: baseUrl,
-      line_items: products.map((product) => [
-        {
-          price_data: {
-            currency: 'eur',
-            product_data: {
-              name: product.title
-            },
-            unit_amount: getAmountInCents(product.price)
+      success_url: `${baseUrl}/checkout/status/{CHECKOUT_SESSION_ID}`,
+      cancel_url: `${baseUrl}/checkout/status/{CHECKOUT_SESSION_ID}`,
+      line_items: products.map((product) => ({
+        price_data: {
+          currency: 'eur',
+          product_data: {
+            name: product.title
           },
-          quantity: 1
-        }
-      ])
+          unit_amount: getAmountInCents(product.price)
+        },
+        quantity: 1
+      }))
     })
 
     const order = await strapi.services['api::order.order'].create({
       data: {
-        product: product.id,
-        total: product.price,
+        product: products.map(({ id }) => id),
+        total: products.reduce((accumulator, { price }) => accumulator + price, 0),
         status: 'unpaid',
         checkout_session: session.id,
         publishedAt: new Date(),
