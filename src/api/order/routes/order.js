@@ -21,7 +21,7 @@ const customRouter = (defaultRouter, extraRoutes = []) => {
 
 const extraRoutes = [
   {
-    method: "GET",
+    method: "POST",
     path: "/orders/confirm",
     handler: "api::order.order.confirm",
   }
