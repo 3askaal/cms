@@ -56,24 +56,24 @@ module.exports = createCoreController('api::order.order', ({ strapi }) =>  ({
       }
     })
 
-    return { id: session.id }
+    return { sessionId: session.id }
   },
 
   async confirm(ctx) {
-    const { checkoutSession } = ctx.request.body
+    const { sessionId } = ctx.request.body
 
-    const session = stripe.checkout.sessions.retrieve(checkoutSession)
+    const session = await stripe.checkout.sessions.retrieve(sessionId)
 
     if (session.payment__status === 'paid') {
       const updateOrder = await strapi.services.order.update({
-        checkout_session: checkoutSession
+        checkout_session: sessionId
       }, {
         status: 'paid'
       })
 
       return sanitizeEntity(updateOrder, { model: strapi.models.order })
+    } else {
+      ctx.throw(400, 'Payment not successful.');
     }
-
-    ctx.throw(400, 'Payment not successful.');
   }
 }))
