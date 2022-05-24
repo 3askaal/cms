@@ -4,27 +4,22 @@
  * order router.
  */
 
-// const { createCoreRouter } = require('@strapi/strapi').factories;
-
-// module.exports = createCoreRouter('api::order.order');
-
 const { createCoreRouter } = require("@strapi/strapi").factories;
+
 const defaultRouter = createCoreRouter("api::order.order");
 
-const customRouter = (innerRouter, extraRoutes = []) => {
-  let routes;
+const customRouter = (defaultRouter, extraRoutes = []) => {
   return {
     get prefix() {
-      return innerRouter.prefix;
+      return defaultRouter.prefix;
     },
     get routes() {
-      if (!routes) routes = innerRouter.routes.concat(extraRoutes);
-      return routes;
+      return [...defaultRouter.routes, ...extraRoutes]
     },
   };
 };
 
-const myExtraRoutes = [
+const extraRoutes = [
   {
     method: "GET",
     path: "/orders/confirm",
@@ -32,4 +27,4 @@ const myExtraRoutes = [
   }
 ];
 
-module.exports = customRouter(defaultRouter, myExtraRoutes);
+module.exports = customRouter(defaultRouter, extraRoutes);
