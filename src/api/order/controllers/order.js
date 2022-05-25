@@ -81,7 +81,7 @@ module.exports = createCoreController('api::order.order', ({ strapi }) =>  ({
 
       const updatedOrder = await strapi.entityService.findOne(
         'api::order.order',
-        order[0].id,
+        order.id,
         {
           populate: '*'
         }
