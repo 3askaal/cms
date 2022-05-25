@@ -7,6 +7,7 @@
 const getAmountInCents = (amount) => parseInt(amount) * 100
 
 const { createCoreController } = require('@strapi/strapi').factories;
+const { sanitize } = require('@strapi/utils');
 const stripe = require('stripe')(process.env.STRIPE_SK);
 
 module.exports = createCoreController('api::order.order', ({ strapi }) =>  ({
@@ -62,14 +63,23 @@ module.exports = createCoreController('api::order.order', ({ strapi }) =>  ({
 
     const session = await stripe.checkout.sessions.retrieve(sessionId)
 
-    if (session.payment__status === 'paid') {
-      const updateOrder = await strapi.services.order.update({
-        checkout_session: sessionId
-      }, {
-        status: 'paid'
+    if (session.payment_status === 'paid') {
+      const order = await strapi.entityService.findMany(
+        'api::order.order',
+        {
+          filters: {
+            checkout_session: sessionId
+          }
+        }
+      )
+
+      const updatedOrder = await strapi.services['api::order.order'].update(order[0].id, {
+        data: {
+          status: 'paid'
+        }
       })
 
-      return sanitizeEntity(updateOrder, { model: strapi.models.order })
+      return sanitize.contentAPI.output(updatedOrder);
     } else {
       ctx.throw(400, 'Payment not successful.');
     }
