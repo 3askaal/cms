@@ -46,7 +46,7 @@ module.exports = createCoreController('api::order.order', ({ strapi }) =>  ({
 
     const order = await strapi.services['api::order.order'].create({
       data: {
-        product: products.map(({ id }) => id),
+        products: products.map(({ id }) => id),
         total: products.reduce((accumulator, { price }) => accumulator + price, 0),
         status: 'unpaid',
         checkout_session: session.id,
@@ -64,7 +64,7 @@ module.exports = createCoreController('api::order.order', ({ strapi }) =>  ({
     const session = await stripe.checkout.sessions.retrieve(sessionId)
 
     if (session.payment_status === 'paid') {
-      const order = await strapi.entityService.findMany(
+      const [order] = await strapi.entityService.findMany(
         'api::order.order',
         {
           filters: {
@@ -73,11 +73,19 @@ module.exports = createCoreController('api::order.order', ({ strapi }) =>  ({
         }
       )
 
-      const updatedOrder = await strapi.services['api::order.order'].update(order[0].id, {
+      await strapi.services['api::order.order'].update(order.id, {
         data: {
           status: 'paid'
-        }
+        },
       })
+
+      const updatedOrder = await strapi.entityService.findOne(
+        'api::order.order',
+        order[0].id,
+        {
+          populate: '*'
+        }
+      )
 
       return sanitize.contentAPI.output(updatedOrder);
     } else {
