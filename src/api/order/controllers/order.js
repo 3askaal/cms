@@ -9,6 +9,7 @@ const getAmountInCents = (amount) => parseInt(amount) * 100
 const { createCoreController } = require('@strapi/strapi').factories;
 const { sanitize } = require('@strapi/utils');
 const stripe = require('stripe')(process.env.STRIPE_SK);
+const sendEmail = require('../../../email')
 
 module.exports = createCoreController('api::order.order', ({ strapi }) =>  ({
   async create(ctx) {
@@ -86,6 +87,16 @@ module.exports = createCoreController('api::order.order', ({ strapi }) =>  ({
           populate: '*'
         }
       )
+
+      await sendEmail({
+        to: order.customerInfo.email,
+        from: env('SUPPORT_EMAIL'),
+        subject: 'We received your order',
+        template: 'order-success',
+        templateVars: {
+          emailAddress: order.customerInfo.email,
+        },
+      });
 
       return sanitize.contentAPI.output(updatedOrder);
     } else {

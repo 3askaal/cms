@@ -17,6 +17,10 @@
     "@strapi/provider-upload-aws-s3": "^4.1.10",
     "@strapi/strapi": "4.1.9",
     "better-sqlite3": "7.4.6",
+    "ejs": "^3.1.8",
+    "html-to-text": "^8.2.0",
+    "juice": "^8.0.0",
+    "nodemailer": "^6.7.5",
     "pg": "^8.7.3",
     "pg-connection-string": "^2.5.0",
     "stripe": "^9.2.0"
