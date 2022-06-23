@@ -91,10 +91,11 @@ module.exports = createCoreController('api::order.order', ({ strapi }) =>  ({
       await sendEmail({
         to: order.customerInfo.email,
         from: env('SUPPORT_EMAIL'),
-        subject: 'We received your order',
+        subject: `We received your order with Order ID: #${order.id}`,
         template: 'order-success',
         templateVars: {
           emailAddress: order.customerInfo.email,
+          orderId: order.id
         },
       });
 
