@@ -1,21 +1,20 @@
-import nodemailer from "nodemailer";
-import fs from "fs";
-import ejs from "ejs";
-import { htmlToText } from "html-to-text";
-import juice from "juice";
-import settings from "../settings";
+const nodemailer = require("nodemailer");
+const fs = require("fs");
+const ejs = require("ejs");
+const { htmlToText } = require("html-to-text");
+const juice = require("juice");
 
 const smtp = nodemailer.createTransport({
-  host: env('SMTP_HOST'),
-  port: env('SMTP_PORT'),
+  host: process.env.SMTP_HOST,
+  port: process.env.SMTP_PORT,
   secure: process.env.NODE_ENV !== "development",
   auth: {
-    user: env('SMTP_USER'),
-    pass: env('SMTP_PASS'),
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
   },
 });
 
-export default ({ template: templateName, templateVars, ...restOfOptions }) => {
+module.exports = ({ template: templateName, templateVars, ...restOfOptions }) => {
   const templatePath = `./templates/${templateName}.html`;
   const options = {
     ...restOfOptions,
